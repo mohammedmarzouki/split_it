@@ -6,7 +6,7 @@
 /*   By: mmarzouk <mmarzouk@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/03/09 19:29:37 by mmarzouk          #+#    #+#             */
-/*   Updated: 2021/03/11 14:30:40 by mmarzouk         ###   ########.fr       */
+/*   Updated: 2021/03/16 12:17:08 by mmarzouk         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -231,7 +231,14 @@ char **append_line(char **s, char *line)
     nfree (line);
     return (new);
 }
-
+void single_q(char *s,int *i)
+{
+	while(s[(*i)++])
+	{
+		if(s[(*i)] == '\'')
+			break;
+	}
+}
 char    **split_it(char *s)
 {
     char **sp;
@@ -247,12 +254,12 @@ char    **split_it(char *s)
         s++;
     while (s[i])
     {
-        if(s[i] == '\\' && s[i+1]) {
-            i += 2;
-        }
         if(s[i] == '"' && !flag) {
             flag = 1;
         }
+        else if (s[i] == '\'' && flag) {
+			single_q(s,&i);
+		}
         else if (s[i] == '"' && flag) {
             flag = 0;
         }
@@ -260,8 +267,14 @@ char    **split_it(char *s)
         {
             sp = append_line(sp,ft_substr(s,start,(i - start)));
             start = i;
+			while (s[i] && s[i + 1] == ' ')
+				i++;
 		}
-        i++;
+        if(s[i] == '\\' && s[i+1]) {
+            i += 2;
+		}
+		else
+			i++;
     }
 	sp = append_line(sp,ft_substr(s,start,(i - start)));
     return(sp);
